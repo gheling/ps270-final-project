@@ -1,0 +1,34 @@
+---
+title: "PS270 Final Project"
+author: "Gabby Heling"
+date: "2026-03-01"
+output:
+  html_document:
+    df_print: paged
+  distill::distill_article:
+    self_contained: false
+description: My final project
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+## Mile Stone 2
+
+
+The research question I want to focus on is: Are laser incidents involving aircraft more common in certain U.S. states than others? The data come from the FAA’s 2025 reports of laser incidents across the United States and consist of 872 observational reports recorded at different times of day and across multiple states. The data are cross-sectional and observational because they capture reported incidents from a single year without any experimental manipulation. I investigate the hypothesis that laser incidents are more likely to occur in states with larger populations and busier airspace. This hypothesis is grounded in an exposure-based theory: states with larger urban populations and more airport operations have more aircraft in visible airspace and more individuals who could potentially observe and target aircraft with lasers, increasing the likelihood of reported incidents. The explanatory variable of interest is state, measured as a categorical variable indicating the U.S. state in which the incident was reported. The outcome variable is the number of laser incidents per state, constructed by aggregating (counting) the total reported incidents within each state for 2025. This produces a count variable that varies across states. Support for my hypothesis would be demonstrated if more populous states systematically exhibit higher incident counts, indicating a positive relationship between state-level exposure and laser incidents. Conversely, if incident counts are evenly distributed across states or show no meaningful association with population size or air traffic exposure, this would undermine the hypothesis.
+
+## Data Set Up 
+```{r}
+library(tidyverse)
+install.packages("readxl")  
+library(readxl)
+```
+
+```{r}
+laser_data <- read_excel("data/Laser-Report-2025_0.xlsx")
+
+glimpse(laser_data)
+head(laser_data)
+```
+
