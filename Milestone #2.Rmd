@@ -24,7 +24,7 @@ library(tidyverse)
 install.packages("readxl")  
 library(readxl)
 ```
-
+Read Function and Glimpse into the data
 ```{r}
 laser_data <- read_excel("data/Laser-Report-2025_0.xlsx")
 

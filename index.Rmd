@@ -23,7 +23,6 @@ The research question I want to focus on is: Are laser incidents involving aircr
 # Data Set Up 
 ```{r}
 library(tidyverse)
-install.packages("readxl")  
 library(readxl)
 ```
 Read Function and Glimpse into the data
