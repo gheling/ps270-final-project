@@ -33,6 +33,8 @@ glimpse(laser_2025)
 head(laser_2025)
 ```
 
+
+
 # Milestone 3
 
 
@@ -65,5 +67,83 @@ top_states
 ```{r}
 ggplot(top_states, aes(x = reorder(State,n), y = n)) + geom_col(fill = "steelblue") + coord_flip() + labs( title = "Top 10 States for Laser Incidents (2025)", x = "State", y = "Number of Incidents")
 ```
+
+# Milestone 4
+
+I tried adding the pop data but it kept breaking and I need to come in for help to complete the milestone because a dot keeps occuring but will only be doing it with state for this milestone 
+
+```{r}
+library(readxl)
+
+pop_data <-  read_excel("data/SCPRC-EST2025-18+POP (1).xlsx", skip = 8) 
+
+colnames(pop_data) <- c("State", "total_pop", "pop_over_18", "percent_0ver_18")
+
+
+
+head(pop_data)
+
+```
+```{r}
+pop_data <- pop_data |>
+  mutate(State = sub("^\\.", "", State))
+
+pop_data
+
+pop_data_laser <- laser_2025 |>
+  left_join(pop_data, by = "State")
+
+pop_data_laser
+```
+```{r}
+state_data <- pop_data_laser |>
+  group_by(State, total_pop) |>
+  summarize(incidents = n(), .groups = "drop")
+```
+
+```{r}
+state_data <- state_data |>
+  mutate(rate_per_million = (incidents / total_pop)*1000000)
+
+rate_per_mil <- lm(rate_per_million ~ total_pop, data = state_data)
+
+rate_per_mil
+
+```
+
+
+The results indicate a very weak negative association between population size and incident rate, for every increase per million people decreases -8.986e-08 but it is very close to 0 suggesting that more populous states do not experience higher per-capita laser incident rates. The effect size is extremely small, indicating that population is not a strong predictor of laser incident rates across states sadly. but the intercept shows when population is 0 ther is about 3.9 laser incidents per million people no matter the state.
+
+
+## Graph of Population 
+
+```{r}
+ggplot(state_data, aes(x = total_pop, y = rate_per_million)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  labs(
+    title = "Laser Incident Rate vs State Population",
+    x = "State Population",
+    y = "Incidents per Million People"
+  )
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

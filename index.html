@@ -116,7 +116,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   <!--/radix_placeholder_rmarkdown_metadata-->
   
   <script type="text/json" id="radix-resource-manifest">
-  {"type":"character","attributes":{},"value":["data/Laser-Report-2025_0.xlsx","data/Laser_Report_2026_FOIA.xlsx","data/Public.accdb","data/read_me.xls","index_files/anchor-4.2.2/anchor.min.js","index_files/bowser-1.9.3/bowser.min.js","index_files/distill-2.2.21/template.v2.js","index_files/figure-html5/unnamed-chunk-5-1.png","index_files/header-attrs-2.17/header-attrs.js","index_files/header-attrs-2.30/header-attrs.js","index_files/jquery-3.6.0/jquery-3.6.0.js","index_files/jquery-3.6.0/jquery-3.6.0.min.js","index_files/jquery-3.6.0/jquery-3.6.0.min.map","index_files/popper-2.6.0/popper.min.js","index_files/tippy-6.2.7/tippy-bundle.umd.min.js","index_files/tippy-6.2.7/tippy-light-border.css","index_files/tippy-6.2.7/tippy.css","index_files/tippy-6.2.7/tippy.umd.min.js","index_files/webcomponents-2.0.0/webcomponents.js","Mile stone #1","MS--2.html"]}
+  {"type":"character","attributes":{},"value":["data/Laser-Report-2025_0.xlsx","data/Laser_Report_2026_FOIA.xlsx","data/Public.accdb","data/read_me.xls","data/SCPRC-EST2025-18+POP (1).xlsx","data/SCPRC-EST2025-18+POP.xlsx","index_files/anchor-4.2.2/anchor.min.js","index_files/bowser-1.9.3/bowser.min.js","index_files/distill-2.2.21/template.v2.js","index_files/figure-html5/unnamed-chunk-10-1.png","index_files/figure-html5/unnamed-chunk-5-1.png","index_files/header-attrs-2.17/header-attrs.js","index_files/header-attrs-2.30/header-attrs.js","index_files/jquery-3.6.0/jquery-3.6.0.js","index_files/jquery-3.6.0/jquery-3.6.0.min.js","index_files/jquery-3.6.0/jquery-3.6.0.min.map","index_files/popper-2.6.0/popper.min.js","index_files/tippy-6.2.7/tippy-bundle.umd.min.js","index_files/tippy-6.2.7/tippy-light-border.css","index_files/tippy-6.2.7/tippy.css","index_files/tippy-6.2.7/tippy.umd.min.js","index_files/webcomponents-2.0.0/webcomponents.js","Mile stone #1","MS--2.html"]}
   </script>
   <!--radix_placeholder_navigation_in_header-->
   <!--/radix_placeholder_navigation_in_header-->
@@ -1668,7 +1668,115 @@ Looking at the counts of total incidents among the top 10 states with the highes
 </div>
 <p><img src="index_files/figure-html5/unnamed-chunk-5-1.png" alt="" width="624" /></p>
 </div>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<h1 id="milestone-4">Milestone 4</h1>
+<p>I tried adding the pop data but it kept breaking and I need to come in for help to complete the milestone because a dot keeps occuring but will only be doing it with state for this milestone</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://readxl.tidyverse.org'>readxl</a></span><span class='op'>)</span></span>
+<span></span>
+<span><span class='va'>pop_data</span> <span class='op'>&lt;-</span>  <span class='fu'><a href='https://readxl.tidyverse.org/reference/read_excel.html'>read_excel</a></span><span class='op'>(</span><span class='st'>"data/SCPRC-EST2025-18+POP (1).xlsx"</span>, skip <span class='op'>=</span> <span class='fl'>8</span><span class='op'>)</span> </span>
+<span></span>
+<span><span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span><span class='op'>(</span><span class='va'>pop_data</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"State"</span>, <span class='st'>"total_pop"</span>, <span class='st'>"pop_over_18"</span>, <span class='st'>"percent_0ver_18"</span><span class='op'>)</span></span>
+<span></span>
+<span></span>
+<span></span>
+<span><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>pop_data</span><span class='op'>)</span></span></code></pre>
+</div>
+<pre><code># A tibble: 6 × 4
+  State       total_pop pop_over_18 percent_0ver_18
+  &lt;chr&gt;           &lt;dbl&gt;       &lt;dbl&gt;           &lt;dbl&gt;
+1 .Alabama      5193088     4075161            78.5
+2 .Alaska        737270      565570            76.7
+3 .Arizona      7623818     6026503            79  
+4 .Arkansas     3114791     2416023            77.6
+5 .California  39355309    31180511            79.2
+6 .Colorado     6012561     4792358            79.7</code></pre>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span><span class='va'>pop_data</span> <span class='op'>&lt;-</span> <span class='va'>pop_data</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>State <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/grep.html'>sub</a></span><span class='op'>(</span><span class='st'>"^\\."</span>, <span class='st'>""</span>, <span class='va'>State</span><span class='op'>)</span><span class='op'>)</span></span>
+<span></span>
+<span><span class='va'>pop_data</span></span></code></pre>
+</div>
+<pre><code># A tibble: 59 × 4
+   State                total_pop pop_over_18 percent_0ver_18
+   &lt;chr&gt;                    &lt;dbl&gt;       &lt;dbl&gt;           &lt;dbl&gt;
+ 1 Alabama                5193088     4075161            78.5
+ 2 Alaska                  737270      565570            76.7
+ 3 Arizona                7623818     6026503            79  
+ 4 Arkansas               3114791     2416023            77.6
+ 5 California            39355309    31180511            79.2
+ 6 Colorado               6012561     4792358            79.7
+ 7 Connecticut            3688496     2970201            80.5
+ 8 Delaware               1059952      849963            80.2
+ 9 District of Columbia    693645      569575            82.1
+10 Florida               23462518    19019796            81.1
+# ℹ 49 more rows</code></pre>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span><span class='va'>pop_data_laser</span> <span class='op'>&lt;-</span> <span class='va'>laser_2025</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate-joins.html'>left_join</a></span><span class='op'>(</span><span class='va'>pop_data</span>, by <span class='op'>=</span> <span class='st'>"State"</span><span class='op'>)</span></span>
+<span></span>
+<span><span class='va'>pop_data_laser</span></span></code></pre>
+</div>
+<pre><code># A tibble: 872 × 13
+   `Incident Date`     `Incident Time` Aircraft Altitude Airport
+   &lt;dttm&gt;                        &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt;  
+ 1 2025-12-01 00:00:00               5 H25B     Unk      D21    
+ 2 2025-12-01 00:00:00              19 E175     Unk      LGA    
+ 3 2025-12-01 00:00:00             100 B738     Unk      ZJX    
+ 4 2025-12-01 00:00:00             101 B38M     Unk      ZJX    
+ 5 2025-12-01 00:00:00             110 B712     Unk      C90    
+ 6 2025-12-01 00:00:00             141 A320     Unk      C90    
+ 7 2025-12-01 00:00:00             144 E75L     Unk      C90    
+ 8 2025-12-01 00:00:00             147 A319     Unk      C90    
+ 9 2025-12-01 00:00:00             205 C25M     Unk      S46    
+10 2025-12-01 00:00:00             229 P28A     Unk      DVT    
+# ℹ 862 more rows
+# ℹ 8 more variables: `Laser Color` &lt;chr&gt;, Injury &lt;chr&gt;, City &lt;chr&gt;,
+#   State &lt;chr&gt;, month &lt;fct&gt;, total_pop &lt;dbl&gt;, pop_over_18 &lt;dbl&gt;,
+#   percent_0ver_18 &lt;dbl&gt;</code></pre>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span><span class='va'>state_data</span> <span class='op'>&lt;-</span> <span class='va'>pop_data_laser</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/group_by.html'>group_by</a></span><span class='op'>(</span><span class='va'>State</span>, <span class='va'>total_pop</span><span class='op'>)</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/summarise.html'>summarize</a></span><span class='op'>(</span>incidents <span class='op'>=</span> <span class='fu'><a href='https://dplyr.tidyverse.org/reference/context.html'>n</a></span><span class='op'>(</span><span class='op'>)</span>, .groups <span class='op'>=</span> <span class='st'>"drop"</span><span class='op'>)</span></span></code></pre>
+</div>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span><span class='va'>state_data</span> <span class='op'>&lt;-</span> <span class='va'>state_data</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>rate_per_million <span class='op'>=</span> <span class='op'>(</span><span class='va'>incidents</span> <span class='op'>/</span> <span class='va'>total_pop</span><span class='op'>)</span><span class='op'>*</span><span class='fl'>1000000</span><span class='op'>)</span></span>
+<span></span>
+<span><span class='va'>rate_per_mil</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/lm.html'>lm</a></span><span class='op'>(</span><span class='va'>rate_per_million</span> <span class='op'>~</span> <span class='va'>total_pop</span>, data <span class='op'>=</span> <span class='va'>state_data</span><span class='op'>)</span></span>
+<span></span>
+<span><span class='va'>rate_per_mil</span></span></code></pre>
+</div>
+<pre><code>
+Call:
+lm(formula = rate_per_million ~ total_pop, data = state_data)
+
+Coefficients:
+(Intercept)    total_pop  
+  3.909e+00   -8.986e-08  </code></pre>
+</div>
+<p>The results indicate a very weak negative association between population size and incident rate, for every increase per million people decreases -8.986e-08 but it is very close to 0 suggesting that more populous states do not experience higher per-capita laser incident rates. The effect size is extremely small, indicating that population is not a strong predictor of laser incident rates across states sadly. but the intercept shows when population is 0 ther is about 3.9 laser incidents per million people no matter the state.</p>
+<h2 id="graph-of-population">Graph of Population</h2>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span><span class='fu'><a href='https://ggplot2.tidyverse.org/reference/ggplot.html'>ggplot</a></span><span class='op'>(</span><span class='va'>state_data</span>, <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/aes.html'>aes</a></span><span class='op'>(</span>x <span class='op'>=</span> <span class='va'>total_pop</span>, y <span class='op'>=</span> <span class='va'>rate_per_million</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span></span>
+<span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/geom_point.html'>geom_point</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>+</span></span>
+<span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/geom_smooth.html'>geom_smooth</a></span><span class='op'>(</span>method <span class='op'>=</span> <span class='st'>"lm"</span><span class='op'>)</span> <span class='op'>+</span></span>
+<span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/labs.html'>labs</a></span><span class='op'>(</span></span>
+<span>    title <span class='op'>=</span> <span class='st'>"Laser Incident Rate vs State Population"</span>,</span>
+<span>    x <span class='op'>=</span> <span class='st'>"State Population"</span>,</span>
+<span>    y <span class='op'>=</span> <span class='st'>"Incidents per Million People"</span></span>
+<span>  <span class='op'>)</span></span></code></pre>
+</div>
+<p><img src="index_files/figure-html5/unnamed-chunk-10-1.png" alt="" width="624" /></p>
+</div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>
