@@ -1,133 +1,127 @@
 ---
 title: "PS270 Final Project"
 author: "Gabby Heling"
-description: "My final project"
+description: "Populations and Laser Reports"
 output:
   distill::distill_article:
     self_contained: false
 ---
 
 
+# **Introduction**
 
-## Project thoughts
-
-My original project thoughts were either something in conservation or environmental. I want to look into incidences where planes had lasers shot at them. 
-
-## Paragraph and milestone #2 
-
-# Mile Stone 2
+You probably have heard the idea you can’t shine a laser at a airplane or it will crash. Well that is actually true shining a laser at a cockpit in a plane can temporarily blind a pilot and increase the potential risk of accidents while in flight. These incidents are actively tracked by the Federal Aviation Administration where pilots are required to report any incidents they experience while flying an airplane in the U.S. as a record of incidents still occurring. This is backbone of this project but with an amplified focus on whether differences  in population size can help explain variation in laser incidents across the United States. My main hypothesis si that states with a larger population will experience a higher number of laser incidents. While the null is that populations do not have an effect on number of laser incidents occurring across the U.S. If the hypothesis is true we will see that more populous states experience a higher number of laser incidents. But in a more general sense being able to pin point why laser events are occurring and if tied populations or a different variable it can help the FAA regulate and target policy in that region to prevent potential plane crashes for occurring
 
 
-The research question I want to focus on is: Are laser incidents involving aircraft more common in certain U.S. states than others? The data come from the FAA’s 2025 reports of laser incidents across the United States and consist of 872 observational reports recorded at different times of day and across multiple states. The data are cross-sectional and observational because they capture reported incidents from a single year without any experimental manipulation. I investigate the hypothesis that laser incidents are more likely to occur in states with larger populations and busier airspace. This hypothesis is grounded in an exposure-based theory: states with larger urban populations and more airport operations have more aircraft in visible airspace and more individuals who could potentially observe and target aircraft with lasers, increasing the likelihood of reported incidents. The explanatory variable of interest is state, measured as a categorical variable indicating the U.S. state in which the incident was reported. The outcome variable is the number of laser incidents per state, constructed by aggregating (counting) the total reported incidents within each state for 2025. This produces a count variable that varies across states. Support for my hypothesis would be demonstrated if more populous states systematically exhibit higher incident counts, indicating a positive relationship between state-level exposure and laser incidents. Conversely, if incident counts are evenly distributed across states or show no meaningful association with population size or air traffic exposure, this would undermine the hypothesis.
+# Understanding the Data 
 
-#3 Data Set Up 
+The data for this project comes from the Federal Aviation Adminstration (FAA) 2025 Laser incident Report, which is for all reported cases of lasers being aimed at aircraft across the U.S. I then additionally added the U.S. census data for state populations to each incident connecting them with the State variable for comparison. This then sets up a cross-sectional analysis for a single year.
+
+What we are looking at is the outcome of number of laser incidents that are reported in each state in 2025. By using the connection of state we can then investigate what within the state is causing the laser incidents but defining the bound by state. In this case we are looking at population as a predictor as to why certain states may have more incidents occur this data was pulled from the U.S. population census estimates and then combined with the FAA data for a complete look at population for each state.
+
+If we are looking at the hypothesis for this report it is states with larger population will experience a higher number of laser incidents. To see if this is true there would have to have a positive relationship with as population grows there are more laser incidents occurring. If there is no relationship this could mean an inability to reject the idea of no connection between population of a state leading to more cumulative incidents. It could mean that another variable such as air traffic volume, behavior, or number of airports in a region could also play a part in why there is a growing number of laser incidents.
+
+To get a better grasp at what we are looking at it is best ot look at the outcome variable states with the highest number of laser incidents to provide a overview of how many incidents are occurring how many there are by state and distributed. 
+
+## Data loading and pivoting 
+
+The following code chunks are the code for loading the FAA 2025 laser report and combining with the state population data 
 ```{r}
+#loading packages
 library(tidyverse)
 library(readxl)
+library(modelsummary)
 ```
-Read Function and Glimpse into the data
 ```{r}
+#loading data and joining both together
 laser_2025 <- read_excel("data/Laser-Report-2025_0.xlsx")
-read_excel("data/Laser_Report_2026_FOIA.xlsx")
-glimpse(laser_2025)
-head(laser_2025)
+pop_data <-  read_excel("data/SCPRC-EST2025-18+POP (1).xlsx", skip = 8) 
+
+colnames(pop_data) <- c("State", "total_pop", "pop_over_18", "percent_0ver_18")
+
+pop_data <- pop_data |>
+  mutate(State = sub("^\\.", "", State))
+
+
+pop_data_laser <- laser_2025 |>
+  left_join(pop_data, by = "State")
+
+
 ```
+# Top Ten States for Laser Incidents 
+
+After this we can look at the top ten states in which these laser incidents are occuring 
 
 
-
-# Milestone 3
-
-
-## data cleaning 
-
+first we have to create the variables for the graph such as getting counts of incidents by states and then selecting only the top ten state
 ```{r}
+#preparing variable names
 laser_2025 <- laser_2025 |>
   mutate( month = format(`Incident Date`, "%b")) |>
    mutate(month = factor(month, levels = c(
     "Jan","Feb","Mar","Apr","May","Jun",
     "Jul","Aug","Sep","Oct","Nov","Dec")))
 
-laser_2025
-
-```
-Looking at the counts of total incidents among the top 10 states with the highest laser incidents 
-```{r}
 state_counts <- laser_2025 |>
   count(State, sort = TRUE) 
 
 top_states <- state_counts |>
   slice_max(n, n = 10)
-
-top_states
-
 ```
 
+We can then take the variables we just creates to make a graph 
 
-## Graph 1 
 ```{r}
+#Making the graphs
 ggplot(top_states, aes(x = reorder(State,n), y = n)) + geom_col(fill = "steelblue") + coord_flip() + labs( title = "Top 10 States for Laser Incidents (2025)", x = "State", y = "Number of Incidents")
 ```
 
-# Milestone 4
+# Finding the Results 
 
-I tried adding the pop data but it kept breaking and I need to come in for help to complete the milestone because a dot keeps occuring but will only be doing it with state for this milestone 
+to test the hypothesis we need to create a graph so we can properly see the relationship between state populationa nd FAA-reported laser incident rates spanning the U.S. First by looking at a scatterplot mapping the relationship between population and incident rates.
+
+## Scatter plot 
 
 ```{r}
-library(readxl)
-
-pop_data <-  read_excel("data/SCPRC-EST2025-18+POP (1).xlsx", skip = 8) 
-
-colnames(pop_data) <- c("State", "total_pop", "pop_over_18", "percent_0ver_18")
-
-
-
-head(pop_data)
-
-```
-```{r}
-pop_data <- pop_data |>
-  mutate(State = sub("^\\.", "", State))
-
-pop_data
-
-pop_data_laser <- laser_2025 |>
-  left_join(pop_data, by = "State")
-
-pop_data_laser
-```
-```{r}
+# Creating new tibble to group incidents by state and new variable
 state_data <- pop_data_laser |>
   group_by(State, total_pop) |>
-  summarize(incidents = n(), .groups = "drop")
+  summarize(incidents = n(), .groups = "drop") |>
+  mutate(rate_per_100k = (incidents / total_pop)*100000)
 ```
 
 ```{r}
-state_data <- state_data |>
-  mutate(rate_per_million = (incidents / total_pop)*1000000)
-
-rate_per_mil <- lm(rate_per_million ~ total_pop, data = state_data)
-
-rate_per_mil
-
-```
-
-
-The results indicate a very weak negative association between population size and incident rate, for every increase per million people decreases -8.986e-08 but it is very close to 0 suggesting that more populous states do not experience higher per-capita laser incident rates. The effect size is extremely small, indicating that population is not a strong predictor of laser incident rates across states sadly. but the intercept shows when population is 0 ther is about 3.9 laser incidents per million people no matter the state.
-
-
-## Graph of Population 
-
-```{r}
-ggplot(state_data, aes(x = total_pop, y = rate_per_million)) +
-  geom_point() +
+# Creating the scatter plot
+ggplot(state_data, aes(x = log(total_pop), y = rate_per_100k)) +
+  geom_point(alpha = 0.7) +
   geom_smooth(method = "lm") +
   labs(
-    title = "Laser Incident Rate vs State Population",
-    x = "State Population",
-    y = "Incidents per Million People"
+    title = "Relationship Between State Population and Laser Incident Rates",
+    x = "Log of State Population (2025)",
+    y = "Incidents per 100,000 People"
   )
 ```
 
+This scatter plot displays the relationship between state population (logged for simplicity) and laser incidents per 100,000 residents in a state. the regression line suggests a very weak negative relationship between population size and incidents. This could be lead to inability to reject the null hypothesis that population has no affect on laser incidents. Overall it is more vistual evidence of limited support foe a relationship between State Populations and incidents.
+
+#Regression Table
+
+To assess whether population size has an associaition with laser incident rates using a regression model where the dependent variable is incident rate per 100,000 to total population. that looks ar the rate and then against populations. 
+
+```{r}
+
+
+rate_per_100k_reg <- lm(rate_per_100k ~ total_pop, data = state_data)
+
+rate_per_100k
+
+modelsummary(rate_per_100k_reg, stars = TRUE, statistic = "p.value", title = "Regression of Laser Rate on State Populations")
+```
+
+
+
+
+The results indicate a very weak negative association between population size and incident rate, for every increase per million people decreases -8.986e-09 but it is very close to 0 suggesting that more populous states do not experience higher per-capita laser incident rates. The effect size is extremely small, indicating that population is not a strong predictor of laser incident rates across states sadly. but the intercept shows when population is 0 ther is about 3.9 laser incidents per million people no matter the state.
 
 
 
